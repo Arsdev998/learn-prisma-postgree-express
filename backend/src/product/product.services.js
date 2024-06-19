@@ -2,9 +2,10 @@
 // kenapa dipisah? Suapaya tanggung jawabnya ter-isolate, dan fungsinya reusable :)
 
 const prisma = require("../db/index.js");
+const { findProducts } = require("./product.repository.js");
 
 const getAllProduct = async () => {
-  const products = await prisma.product.findMany();
+  const products = await findProducts()
   return products;
 };
 
