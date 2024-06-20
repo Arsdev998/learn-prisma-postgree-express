@@ -1,10 +1,13 @@
+// src/controll/google/google.js
+// console.log("GOOGLE_CLIENT_ID:", process.env.GOOGLE_CLIENT_ID);
+// console.log("GOOGLE_CLIENT_SECRET:", process.env.GOOGLE_CLIENT_SECRET);
 const { google } = require("googleapis");
 const express = require("express");
-const prisma = require("../../db");
+const prisma = require("../../db/index.js");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 
-const oauthClient = new google.auth.OAuth2(
+const oAuth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_CLIENT_ID,
   process.env.GOOGLE_CLIENT_SECRET,
   "http://localhost:5000/auth/google/callback"
@@ -15,45 +18,48 @@ const scopes = [
   "https://www.googleapis.com/auth/userinfo.profile",
 ];
 
-const authorizationUrl = oauthClient.generateAuthUrl({
+const authorizationUrl = oAuth2Client.generateAuthUrl({
   access_type: "offline",
   scope: scopes,
   include_granted_scopes: true,
 });
 
-//GOOGlE Login
+// GOOGLE Login
 router.get("/auth/google", (req, res) => {
   res.redirect(authorizationUrl);
 });
 
-// GOOGlE CALLBACK
-router.get("auth/google/callback", async (req, res) => {
-  const { code } = req.query;
-  const { tokens } = await oauthClient.getToken(code);
-  oauthClient.setCredentials(tokens);
+// GOOGLE CALLBACK
+router.get("/auth/google/callback", async (req, res) => {
+  try {
+    const { code } = req.query;
+    const { tokens } = await oAuth2Client.getToken(code);
+    oAuth2Client.setCredentials(tokens);
 
-  const oauth2 = google.oauth2({
-    auth: oauthClient,
-    version: "v2",
-  });
-  const { data } = await oauth2.userinfo.get();
-  if (!data.email || !data.name) {
-    return res.json({
-      data: data,
+    const oauth2 = google.oauth2({
+      auth: oAuth2Client,
+      version: "v2",
     });
-  }
-  let user = await prisma.user.findUnique({
-    where: data.email,
-  });
+    const { data } = await oauth2.userinfo.get();
+    if (!data.email || !data.name) {
+      return res.json({
+        data: data,
+      });
+    }
+    let user = await prisma.user.findUnique({
+      where: { email: data.email },
+    });
 
-  if (!user) {
-    user = await prisma.user.create({
-      data: {
-        name: data.name,
-        email: data.email,
-        address: "-",
-      },
-    });
+    if (!user) {
+      user = await prisma.user.create({
+        data: {
+          name: data.name,
+          email: data.email,
+          address: "-",
+        },
+      });
+    }
+
     const payload = {
       id: user.id,
       name: user.name,
@@ -67,19 +73,22 @@ router.get("auth/google/callback", async (req, res) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // Hanya gunakan secure pada environment produksi
-      maxAge: expiresIn * 1000, // Expiry time dalam milidetik
+      secure: process.env.NODE_ENV === "production",
+      maxAge: expiresIn * 1000,
     });
+    res.redirect(`${process.env.FRONTEND_URL}/`);
 
-    // return res.redirect(`http://localhost:3000/auth-success?token=${token}`)
-    return res.json({
-      data: {
-        id: user.id,
-        name: user.name,
-        address: user.address,
-      },
-      token: token,
-    });
+    // return res.json({
+    //   data: {
+    //     id: user.id,
+    //     name: user.name,
+    //     address: user.address,
+    //   },
+    //   token: token,
+    // });
+  } catch (error) {
+    console.error("Error during Google OAuth callback:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
