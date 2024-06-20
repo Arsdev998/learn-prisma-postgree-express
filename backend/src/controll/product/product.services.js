@@ -1,11 +1,11 @@
 //services layer bertujuan untuk handle busines logic
 // kenapa dipisah? Suapaya tanggung jawabnya ter-isolate, dan fungsinya reusable :)
 
-const prisma = require("../db/index.js");
+const prisma = require("../../db/index.js");
 const { findProducts } = require("./product.repository.js");
 
 const getAllProduct = async () => {
-  const products = await findProducts()
+  const products = await findProducts();
   return products;
 };
 
@@ -61,7 +61,6 @@ const updateProducts = async (id, productData) => {
   });
   return product;
 };
-
 
 module.exports = {
   getAllProduct,

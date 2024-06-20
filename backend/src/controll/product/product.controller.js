@@ -2,7 +2,6 @@
 // bisanya juga handle validasi body
 const express = require("express");
 const router = express.Router();
-const prisma = require("../db/index.js");
 const {
   getAllProduct,
   getProductById,
