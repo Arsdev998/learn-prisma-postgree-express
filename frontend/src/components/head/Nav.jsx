@@ -1,28 +1,47 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "@/features/auth/authSlice";
 
 const Nav = ({ className }) => {
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate('/login');
+  };
+
   return (
     <nav className={`${className}`}>
       <ul className="flex flex-col md:flex-row gap-5 items-center px-5">
         <li className="font-medium text-md text-[#05073C] transition hover:text-[#EB662B]">
-          <Link>Destinasi</Link>
+          <Link to="/destinasi">Destinasi</Link>
         </li>
         <li className="font-medium text-md text-[#05073C] transition hover:text-[#EB662B]">
-          <Link>About</Link>
+          <Link to="/about">About</Link>
         </li>
         <li className="font-medium text-md text-[#05073C] transition hover:text-[#EB662B]">
-          <Link>Contact</Link>
+          <Link to="/contact">Contact</Link>
         </li>
-        <li className="font-medium text-md text-[#05073C] transition hover:text-[#EB662B]">
-          <Link to={'/register'}>Sign up</Link>
-        </li>
-        <li>
-          <Link to={'/login'}>
-            <Button varian>Login</Button>
-          </Link>
-        </li>
+        {isAuthenticated ? (
+          <li>
+            <Button onClick={handleLogout}>Logout</Button>
+          </li>
+        ) : (
+          <ul className="flex items-center gap-2">
+            <li className="font-medium text-md text-[#05073C] transition hover:text-[#EB662B]">
+              <Link to="/register">Sign up</Link>
+            </li>
+            <li>
+              <Link to="/login">
+                <Button>Login</Button>
+              </Link>
+            </li>
+          </ul>
+        )}
       </ul>
     </nav>
   );

@@ -22,53 +22,61 @@ router.post("/register", async (req, res) => {
   });
 });
 
+// Login route
+// Login route
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
-  const user = await prisma.user.findUnique({
-    where: { email: email },
-  });
-  if (!user) {
-    return res.status(404).json({
-      message: "User Not Found",
-    });
-  }
-  if (!user.password) {
-    return res.status(403).json({
-      message: "Password Not Set",
-    });
+
+  if (!email || !password) {
+    return res.status(400).json({ message: "Email and password are required" });
   }
 
-  const isPasswordValid = await bcrypt.compare(password, user.password);
-  if (isPasswordValid) {
-    const payload = {
-      id: user.id,
-      name: user.name,
-      address: user.address,
-    };
-
-    const secret = process.env.JWT_SECRET;
-    const expiresIn = 60 * 60 * 1; // 1 hour
-
-    const token = jwt.sign(payload, secret, { expiresIn: expiresIn });
-
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // Hanya gunakan secure pada environment produksi
-      maxAge: expiresIn * 1000, // Expiry time dalam milidetik
+  try {
+    const user = await prisma.user.findUnique({
+      where: { email: email },
     });
 
-    return res.json({
-      data: {
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (!user.password) {
+      return res.status(403).json({ message: "Password not set" });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (isPasswordValid) {
+      const payload = {
         id: user.id,
         name: user.name,
         address: user.address,
-      },
-      token: token,
-    });
-  } else {
-    return res.status(403).json({
-      message: "Wrong password",
-    });
+      };
+
+      const secret = process.env.JWT_SECRET;
+      const expiresIn = 60 * 60 * 1; // 1 hour
+
+      const token = jwt.sign(payload, secret, { expiresIn: expiresIn });
+
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        maxAge: expiresIn * 1000, // Expiry time dalam milidetik
+      });
+
+      return res.json({
+        data: {
+          id: user.id,
+          name: user.name,
+          address: user.address,
+        },
+        token: token,
+      });
+    } else {
+      return res.status(403).json({ message: "Wrong password" });
+    }
+  } catch (error) {
+    console.error("Error during login:", error);
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 

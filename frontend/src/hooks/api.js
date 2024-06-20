@@ -36,6 +36,7 @@ export const getById = async (endpoint, id) => {
 // Fungsi untuk melakukan POST request
 export const post = async (endpoint, data) => {
   try {
+    console.log("Sending POST request to:", endpoint, "with data:", data); // Tambahkan logging di sini
     const response = await api.post(endpoint, data);
     return response.data;
   } catch (error) {

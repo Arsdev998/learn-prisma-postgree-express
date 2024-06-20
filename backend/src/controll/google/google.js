@@ -77,15 +77,6 @@ router.get("/auth/google/callback", async (req, res) => {
       maxAge: expiresIn * 1000,
     });
     res.redirect(`${process.env.FRONTEND_URL}/`);
-
-    // return res.json({
-    //   data: {
-    //     id: user.id,
-    //     name: user.name,
-    //     address: user.address,
-    //   },
-    //   token: token,
-    // });
   } catch (error) {
     console.error("Error during Google OAuth callback:", error);
     res.status(500).json({ error: "Internal Server Error" });
