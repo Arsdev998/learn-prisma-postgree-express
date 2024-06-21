@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { register } from "../features/auth/authSlice";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import googleIcon from "../assets/img/google.png";
 
 const Register = () => {
   const dispatch = useDispatch();
@@ -26,6 +27,9 @@ const Register = () => {
     e.preventDefault();
     dispatch(register({ name, email, password }));
     navigate("/");
+  };
+  const handleGoogleLogin = () => {
+    window.location.href = `${import.meta.env.VITE_BACKEND_URL}/auth/google`;
   };
 
   return (
@@ -87,6 +91,14 @@ const Register = () => {
             Register
           </Button>
         </form>
+        <Button
+          onClick={handleGoogleLogin}
+          className="flex gap-2 w-full py-2 mt-4 bg-slate-700 hover:bg-slate-800"
+        >
+          Register with Google
+          <img src={googleIcon} alt="" className="w-4 h-4"/>
+        </Button>
+        <Link to={'/login'} className="text-blue-700 font-medium">Sudah memiliki akun?, Login</Link>
       </div>
     </div>
   );

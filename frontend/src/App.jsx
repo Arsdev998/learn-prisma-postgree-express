@@ -10,26 +10,36 @@ const App = () => {
   const navigate = useNavigate();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
+ 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get("token");
+    const token = urlParams.get('token');
     if (token) {
-      localStorage.setItem("token", token); // Simpan token di local storage
+      console.log('Token from URL:', token);
+      localStorage.setItem('token', token);
       dispatch(googleLogin(token)).then(() => {
-        navigate("/"); // Arahkan ke halaman home setelah login
+        console.log('Dispatched googleLogin with token:', token);
+        navigate('/');
       });
-      window.history.replaceState({}, document.title, "/"); // Menghapus token dari URL
+      window.history.replaceState({}, document.title, '/');
     } else {
-      const storedToken = localStorage.getItem("token");
-      if (storedToken && !isAuthenticated) {
-        dispatch(login({ token: storedToken }));
+      const cookieToken = document.cookie.split('; ').find(row => row.startsWith('token='));
+      if (cookieToken) {
+        const storedToken = cookieToken.split('=')[1];
+        console.log('Token from cookie:', storedToken);
+        localStorage.setItem('token', storedToken);
+        if (!isAuthenticated) {
+          dispatch(googleLogin()).then(() => {
+            console.log('Dispatched googleLogin with cookie token:', storedToken);
+          });
+        }
       }
     }
   }, [dispatch, navigate, isAuthenticated]);
 
   return (
     <>
-      <Header /> {/* Tambahkan Navbar */}
+      <Header />
       <Outlet />
     </>
   );

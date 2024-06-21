@@ -1,12 +1,11 @@
 const jwt = require('jsonwebtoken');
+const prisma = require('../../db/index.js'); // Sesuaikan dengan path ke file database Prisma Anda
 
 const accessValidation = (req, res, next) => {
-    const token = req.cookies.token; // Mengambil token dari cookie
+    const token = req.cookies.token;
 
     if (!token) {
-        return res.status(401).json({
-            message: 'Token diperlukan'
-        });
+        return res.status(401).json({ message: 'Token diperlukan' });
     }
 
     const secret = process.env.JWT_SECRET;
@@ -18,11 +17,25 @@ const accessValidation = (req, res, next) => {
             req.userData = jwtDecode;
         }
     } catch (error) {
-        return res.status(401).json({
-            message: 'Unauthorized'
-        });
+        return res.status(401).json({ message: 'Unauthorized' });
     }
     next();
 };
 
-module.exports = accessValidation;
+const adminValidation = async (req, res, next) => {
+    if (!req.userData) {
+        return res.status(401).json({ message: 'Unauthorized' });
+    }
+
+    const user = await prisma.user.findUnique({
+        where: { id: req.userData.id },
+    });
+
+    if (!user || user.role !== 'ADMIN') {
+        return res.status(403).json({ message: 'Forbidden: Admin access required' });
+    }
+
+    next();
+};
+
+module.exports = { accessValidation, adminValidation };

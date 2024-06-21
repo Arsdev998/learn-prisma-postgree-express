@@ -9,6 +9,7 @@ import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import { Provider } from "react-redux";
 import store from "./store.js";
+import Destination from "./pages/Destination.jsx";
 
 const router = createBrowserRouter([
   {
@@ -18,6 +19,10 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <Home />,
+      },
+      {
+        path: "/destinasi",
+        element: <Destination />,
       },
     ],
   },

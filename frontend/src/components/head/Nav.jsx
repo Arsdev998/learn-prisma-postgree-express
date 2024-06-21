@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,6 +8,10 @@ const Nav = ({ className }) => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    console.log('Nav re-rendered. isAuthenticated:', isAuthenticated);
+  }, [isAuthenticated]);
 
   const handleLogout = () => {
     dispatch(logout());

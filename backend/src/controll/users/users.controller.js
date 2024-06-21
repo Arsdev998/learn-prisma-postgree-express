@@ -1,121 +1,102 @@
-const bcrypt = require("bcrypt");
 const express = require("express");
-const prisma = require("../../db");
 const router = express.Router();
-const jwt = require("jsonwebtoken");
-const accessValidation = require("../middleware/accesValidation");
+const {
+  registerUser,
+  loginUser,
+  logoutUser,
+  uploadProfilePic,
+  deleteUser,
+  updateUser,
+} = require("./users.services");
+const multer = require("multer");
+const { adminValidation } = require("../middleware/accesValidation");
 
+// Middleware untuk mengunggah file menggunakan multer
+const upload = multer({ dest: 'uploads/profile-pics/' });
+
+// Daftar pengguna baru
 router.post("/register", async (req, res) => {
-  const { name, email, password } = req.body;
-
-  const hashedPassword = await bcrypt.hash(password, 10);
-  const result = await prisma.user.create({
-    data: {
-      name,
-      email,
-      password: hashedPassword,
-    },
-  });
-  res.json({
-    message: "user Created",
-    result,
-  });
-});
-
-// Login route
-// Login route
-router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-
-  if (!email || !password) {
-    return res.status(400).json({ message: "Email and password are required" });
-  }
-
   try {
-    const user = await prisma.user.findUnique({
-      where: { email: email },
+    const userData = req.body;
+    const result = await registerUser(userData);
+
+    res.cookie("token", result.token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 3600000, // 1 hour in milliseconds
     });
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    if (!user.password) {
-      return res.status(403).json({ message: "Password not set" });
-    }
-
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (isPasswordValid) {
-      const payload = {
-        id: user.id,
-        name: user.name,
-        address: user.address,
-      };
-
-      const secret = process.env.JWT_SECRET;
-      const expiresIn = 60 * 60 * 1; // 1 hour
-
-      const token = jwt.sign(payload, secret, { expiresIn: expiresIn });
-
-      res.cookie("token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        maxAge: expiresIn * 1000, // Expiry time dalam milidetik
-      });
-
-      return res.json({
-        data: {
-          id: user.id,
-          name: user.name,
-          address: user.address,
-        },
-        token: token,
-      });
-    } else {
-      return res.status(403).json({ message: "Wrong password" });
-    }
+    res.json({
+      message: "User created",
+      result,
+    });
   } catch (error) {
-    console.error("Error during login:", error);
-    return res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ error: error.message });
   }
 });
 
-router.post("/logout", (req, res) => {
-  res.clearCookie("token", {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "Strict",
-  });
-  res.status(200).json({ message: "Successfully logged out" });
+// Login pengguna
+router.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const result = await loginUser(email, password);
+
+    res.cookie("token", result.token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 3600000, // 1 hour in milliseconds
+    });
+
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
-router.post("/create", accessValidation, async (req, res) => {
-  const { name, email, address } = req.body;
-
-  const result = await prisma.user.create({
-    data: {
-      name: name,
-      email: email,
-      address: address,
-    },
-  });
-  res.json({
-    data: result,
-    message: "user created",
-  });
+// Logout pengguna
+router.post("/logout", async (req, res) => {
+  try {
+    await logoutUser(res);
+    res.status(200).json({ message: "Successfully logged out" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
-router.delete("/delete/:id", accessValidation, async (req, res) => {
-  const { id } = req.params;
+router.post("/upload-profile-pic", upload.single('profilePic'), async (req, res) => {
+  try {
+    const { file } = req;
+    const token = req.cookies.token;
+    const user = await uploadProfilePic(token, file);
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
-  const result = await prisma.user.delete({
-    where: {
-      id: parseInt(id),
-    },
-  });
-  res.json({
-    message: `user ${id}, delete`,
-  });
+router.put("/update", upload.single('profilePic'), async (req, res) => {
+  try {
+    const token = req.cookies.token;
+    const userDetails = {
+      name: req.body.name,
+      file: req.file,
+    };
+    const user = await updateUser(token, userDetails);
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Hapus pengguna
+router.delete("/delete/:id",adminValidation, async (req, res) => {
+  try {
+    const { id } = req.params;
+    await deleteUser(parseInt(id));
+    res.json({ message: `User ${id} deleted` });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 module.exports = router;

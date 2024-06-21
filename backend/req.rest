@@ -1,0 +1,17 @@
+POST http://localhost:5000/wisata
+Content-Type: application/json
+
+{
+  "name": "Sirin Punti",
+  "description": "Air Terjun yang Berada di pedalaman Desa Meragun",
+  "provinsi": "Kalimantan Barat",
+  "kabupaten": "Sekadau",
+  "kecamatan": "Nanga Taman",
+  "maps": "https://maps.app.goo.gl/32gHU3jc3H57G2XY9",
+  "coverimg": "https://sekadaukab.go.id/wp-content/uploads/2020/05/757.jpg",
+  "images": [
+    "https://example.com/image1.jpg",
+    "https://example.com/image2.jpg",
+    "https://example.com/image3.jpg"
+  ]
+}

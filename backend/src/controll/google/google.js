@@ -1,6 +1,3 @@
-// src/controll/google/google.js
-// console.log("GOOGLE_CLIENT_ID:", process.env.GOOGLE_CLIENT_ID);
-// console.log("GOOGLE_CLIENT_SECRET:", process.env.GOOGLE_CLIENT_SECRET);
 const { google } = require("googleapis");
 const express = require("express");
 const prisma = require("../../db/index.js");
@@ -24,12 +21,10 @@ const authorizationUrl = oAuth2Client.generateAuthUrl({
   include_granted_scopes: true,
 });
 
-// GOOGLE Login
 router.get("/auth/google", (req, res) => {
   res.redirect(authorizationUrl);
 });
 
-// GOOGLE CALLBACK
 router.get("/auth/google/callback", async (req, res) => {
   try {
     const { code } = req.query;
@@ -55,7 +50,7 @@ router.get("/auth/google/callback", async (req, res) => {
         data: {
           name: data.name,
           email: data.email,
-          address: "-",
+          profilePic: data.picture, // Jika ingin menyimpan gambar profil dari Google
         },
       });
     }
@@ -63,7 +58,7 @@ router.get("/auth/google/callback", async (req, res) => {
     const payload = {
       id: user.id,
       name: user.name,
-      address: user.address,
+      profilePic: user.profilePic,
     };
 
     const secret = process.env.JWT_SECRET;
@@ -76,7 +71,8 @@ router.get("/auth/google/callback", async (req, res) => {
       secure: process.env.NODE_ENV === "production",
       maxAge: expiresIn * 1000,
     });
-    res.redirect(`${process.env.FRONTEND_URL}/`);
+
+    res.redirect(`${process.env.FRONTEND_URL}/?token=${token}`);
   } catch (error) {
     console.error("Error during Google OAuth callback:", error);
     res.status(500).json({ error: "Internal Server Error" });
