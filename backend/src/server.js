@@ -17,10 +17,16 @@ app.use(morgan('dev'));
 const wisata = require("./controll/wisata/wisata.controller.js");
 const auth = require("./controll/users/users.controller.js");
 const google = require("./controll/google/google.js");
+const comments = require("./controll/comment/comment.controller.js");
+const favorites = require("./controll/favorite/favorite.controller.js");
+const ratings = require("./controll/ratting/ratting.controller.js");
 
 app.use("/", google);
 app.use("/wisata", wisata);
 app.use("/auth", auth);
+app.use("/wisata/comments", comments);
+app.use("/wisata/favorites", favorites);
+app.use("/wisata/ratings", ratings);
 
 // Middleware untuk penanganan kesalahan
 app.use((err, req, res, next) => {

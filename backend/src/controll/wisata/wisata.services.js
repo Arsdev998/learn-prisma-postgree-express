@@ -57,7 +57,7 @@ const createWisata = async (newWisataData) => {
 
 const deleteWisata = async (id) => {
   const wisata = await getWisataById(id);
-  
+
   // Menghapus gambar dari Cloudinary
   if (wisata.coverimg) {
     const coverImgPublicId = wisata.coverimg.split('/').pop().split('.')[0];
@@ -70,6 +70,12 @@ const deleteWisata = async (id) => {
       await cloudinary.uploader.destroy(`wisata-images/${imgPublicId}`);
     }
   }
+
+  // Menghapus records terkait di Prisma
+  await prisma.comment.deleteMany({ where: { wisataId: id } });
+  await prisma.rating.deleteMany({ where: { wisataId: id } });
+  await prisma.favorite.deleteMany({ where: { wisataId: id } });
+  await prisma.image.deleteMany({ where: { wisataId: id } });
 
   await prisma.wisata.delete({
     where: { id }
