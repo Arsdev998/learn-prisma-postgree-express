@@ -61,14 +61,17 @@ model Comment {
 }
 
 model Favorite {
-  id       Int     @id @default(autoincrement())
-  userId   Int
-  wisataId Int
-  createdAt DateTime  @default(now()) @db.Timestamp(0)
-  updatedAt DateTime  @default(now()) @db.Timestamp(0)
-  user     User     @relation(fields: [userId], references: [id])
-  wisata   Wisata   @relation(fields: [wisataId], references: [id])
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  wisataId  Int
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @default(now()) @db.Timestamp(0)
+  user      User     @relation(fields: [userId], references: [id])
+  wisata    Wisata   @relation(fields: [wisataId], references: [id])
+
+  @@unique([userId, wisataId])
 }
+
 
 model Rating {
   id       Int     @id @default(autoincrement())

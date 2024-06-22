@@ -1,11 +1,20 @@
+// src/controll/rating/rating.controller.js
 const express = require("express");
-const { getRatingsByWisataId, addRating, removeRating } = require("./ratting.services.js");
+const {
+  getAllRatingsByWisataId,
+  createNewRating,
+  updateExistingRating,
+  removeRating,
+  getRatingById,
+} = require("./ratting.services.js");
+const { accessValidation } = require("../middleware/accesValidation.js");
 const router = express.Router();
-const { accessValidation } = require("../middleware/accesValidation");
 
-router.get("/:wisataId", async (req, res) => {
+router.use(express.json());
+
+router.get("/wisata/:wisataId", async (req, res) => {
   try {
-    const ratings = await getRatingsByWisataId(parseInt(req.params.wisataId));
+    const ratings = await getAllRatingsByWisataId(parseInt(req.params.wisataId));
     res.send(ratings);
   } catch (error) {
     res.status(500).send({ error: "Failed to fetch ratings" });
@@ -15,20 +24,33 @@ router.get("/:wisataId", async (req, res) => {
 router.post("/", accessValidation, async (req, res) => {
   try {
     const ratingData = req.body;
-    const rating = await addRating(ratingData);
+    ratingData.userId = req.userData.id; // Menggunakan ID pengguna dari token
+    const rating = await createNewRating(ratingData);
     res.status(201).send(rating);
   } catch (error) {
     res.status(400).send({ error: `Failed: ${error.message}` });
   }
 });
 
-router.delete("/:id", accessValidation, async (req, res) => {
+router.patch("/:id", accessValidation, async (req, res) => {
   try {
-    await removeRating(parseInt(req.params.id));
-    res.send({ message: "Rating deleted" });
+    const ratingId = parseInt(req.params.id);
+    const ratingData = req.body;
+    const rating = await updateExistingRating(ratingId, ratingData);
+    res.send({ rating, message: "Rating updated successfully" });
   } catch (error) {
-    res.status(400).send({ error: error.message });
+    res.status(400).send({ error: "Failed to update rating" });
   }
 });
 
-module.exports = router;accessValidation
+router.delete("/:id", accessValidation, async (req, res) => {
+  try {
+    const ratingId = parseInt(req.params.id);
+    await removeRating(ratingId);
+    res.send({ message: "Rating deleted" });
+  } catch (error) {
+    res.status(400).send({ error: "Failed to delete rating" });
+  }
+});
+
+module.exports = router;

@@ -1,33 +1,39 @@
 const express = require("express");
-const { getFavoritesByUserId, addFavorite, removeFavorite } = require("./favorite.services.js");
+const { addFavoriteService, getFavoritesService, deleteFavoriteService } = require("./favorite.services");
+const { accessValidation } = require("../middleware/accesValidation.js");
 const router = express.Router();
-const { accessValidation } = require("../middleware/accesValidation");
-
-router.get("/:userId", accessValidation, async (req, res) => {
-  try {
-    const favorites = await getFavoritesByUserId(parseInt(req.params.userId));
-    res.send(favorites);
-  } catch (error) {
-    res.status(500).send({ error: "Failed to fetch favorites" });
-  }
-});
 
 router.post("/", accessValidation, async (req, res) => {
   try {
-    const favoriteData = req.body;
-    const favorite = await addFavorite(favoriteData);
-    res.status(201).send(favorite);
+    const { userId, wisataId } = req.body;
+    const favorite = await addFavoriteService(userId, wisataId);
+    res.status(201).json({
+      message: "Favorite berhasil ditambahkan",
+      data: favorite,
+    });
   } catch (error) {
-    res.status(400).send({ error: `Failed: ${error.message}` });
+    res.status(400).json({ error: `Gagal: ${error.message}` });
   }
 });
 
-router.delete("/:id", accessValidation, async (req, res) => {
+router.get("/:userId", accessValidation, async (req, res) => {
   try {
-    await removeFavorite(parseInt(req.params.id));
-    res.send({ message: "Favorite deleted" });
+    const { userId } = req.params;
+    const favorites = await getFavoritesService(parseInt(userId, 10));
+    res.status(200).json(favorites);
   } catch (error) {
-    res.status(400).send({ error: error.message });
+    res.status(400).json({ error: `Gagal: ${error.message}` });
+  }
+});
+
+router.delete('/:wisataId', accessValidation, async (req, res) => {
+  try {
+    const userId = req.userData.id;
+    const { wisataId } = req.params;
+    await deleteFavoriteService(userId, wisataId);
+    res.json({ message: 'Favorite berhasil dihapus' });
+  } catch (error) {
+    res.status(400).json({ error: `Gagal menghapus favorit: ${error.message}` });
   }
 });
 
