@@ -28,7 +28,7 @@ enum Role {
 model Wisata {
   id          Int       @id @default(autoincrement())
   name        String    @db.VarChar(255)
-  description String    @db.VarChar(255)
+  description String    @db.VarChar(1024)
   maps        String    @db.VarChar(255)
   provinsi    String    @db.VarChar(255)
   kabupaten   String    @db.VarChar(255)

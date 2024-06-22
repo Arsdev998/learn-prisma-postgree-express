@@ -13,7 +13,7 @@ const Destination = () => {
           </p>
           <p className="text-gray-800 text-xl font-semibold">Explore Semua Hal yang Bisa Dilakukan di Phuket</p>
         </div>
-        <div className="flex">
+        <div className="flex gap-x-5">
           <SideBar/>
           <ListDestinasi/>
         </div>
