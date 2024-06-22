@@ -26,7 +26,7 @@ app.use("/wisata", wisata);
 app.use("/auth", auth);
 app.use("/wisata/comments", comments);
 app.use("/wisata/favorites", favorites);
-app.use("/wisata/ratings", ratings);
+app.use("/wisata/rattings", ratings);
 
 // Middleware untuk penanganan kesalahan
 app.use((err, req, res, next) => {

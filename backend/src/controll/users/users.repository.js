@@ -12,16 +12,25 @@ const findUserByEmail = async (email) => {
   });
 };
 
-const findUserById = async (id) => {
-  return await prisma.user.findUnique({
-    where: { id },
-  });
-};
+
 
 const updateUserProfilePic = async (userId, profilePic) => {
   return await prisma.user.update({
     where: { id: userId },
     data: { profilePic },
+  });
+};
+
+const findUserById = async (id) => {
+  return await prisma.user.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      profilePic: true,
+      role: true,
+    }
   });
 };
 
@@ -31,6 +40,7 @@ const updateUserDetails = async (userId, userDetails) => {
     data: userDetails,
   });
 };
+
 
 const deleteUserById = async (id) => {
   return await prisma.user.delete({

@@ -10,6 +10,17 @@ const api = axios.create({
   withCredentials: true, // Mengizinkan pengiriman cookies
 });
 
+export const get = async (endpoint) => {
+  try {
+    const response = await api.get(endpoint);
+    console.log("Response data:", response.data);
+    return response.data;
+  } catch (error) {
+    console.log("error get data", error);
+    throw error;
+  }
+};
+
 // Fungsi untuk melakukan POST request
 export const post = async (endpoint, data) => {
   try {

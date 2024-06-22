@@ -1,55 +1,55 @@
-// src/controll/rating/rating.controller.js
 const express = require("express");
-const {
-  getAllRatingsByWisataId,
-  createNewRating,
-  updateExistingRating,
-  removeRating,
-  getRatingById,
-} = require("./ratting.services.js");
-const { accessValidation } = require("../middleware/accesValidation.js");
 const router = express.Router();
-
-router.use(express.json());
-
-router.get("/wisata/:wisataId", async (req, res) => {
-  try {
-    const ratings = await getAllRatingsByWisataId(parseInt(req.params.wisataId));
-    res.send(ratings);
-  } catch (error) {
-    res.status(500).send({ error: "Failed to fetch ratings" });
-  }
-});
+const {
+  createRating,
+  getRatingsForWisata,
+  removeRating,
+  editRating,
+} = require("./ratting.services");
+const { accessValidation } = require("../middleware/accesValidation");
 
 router.post("/", accessValidation, async (req, res) => {
   try {
-    const ratingData = req.body;
-    ratingData.userId = req.userData.id; // Menggunakan ID pengguna dari token
-    const rating = await createNewRating(ratingData);
-    res.status(201).send(rating);
+    const { value, wisataId } = req.body;
+    const userId = req.userData.id;
+    const rating = await createRating(userId, wisataId, value);
+    res.status(201).json(rating);
   } catch (error) {
-    res.status(400).send({ error: `Failed: ${error.message}` });
+    res.status(400).json({ error: `Failed: ${error.message}` });
   }
 });
 
-router.patch("/:id", accessValidation, async (req, res) => {
+router.get("/wisata/:wisataId", async (req, res) => {
   try {
-    const ratingId = parseInt(req.params.id);
-    const ratingData = req.body;
-    const rating = await updateExistingRating(ratingId, ratingData);
-    res.send({ rating, message: "Rating updated successfully" });
+    const ratings = await getRatingsForWisata(parseInt(req.params.wisataId));
+    res.json(ratings);
   } catch (error) {
-    res.status(400).send({ error: "Failed to update rating" });
+    res.status(400).json({ error: `Failed: ${error.message}` });
   }
 });
 
 router.delete("/:id", accessValidation, async (req, res) => {
   try {
     const ratingId = parseInt(req.params.id);
-    await removeRating(ratingId);
-    res.send({ message: "Rating deleted" });
+    const userId = req.userData.id;
+    const userRole = req.userData.role;
+    await removeRating(ratingId, userId, userRole);
+    res.json({ message: "Rating deleted" });
   } catch (error) {
-    res.status(400).send({ error: "Failed to delete rating" });
+    res.status(400).json({ error: `Failed: ${error.message}` });
+  }
+});
+
+router.put("/:id", accessValidation, async (req, res) => {
+  try {
+    const ratingId = parseInt(req.params.id);
+    const { value } = req.body;
+    const userId = req.userData.id;
+    const userRole = req.userData.role;
+    const rating = await editRating(ratingId, value, userId, userRole);
+    res.json(rating);
+  } catch (error) {
+    res.status(400).json({ error: `Failed: ${error.message}` });
   }
 });
 

@@ -6,6 +6,7 @@ const {
   findUserById,
   updateUserProfilePic,
   deleteUserById,
+  updateUserDetails,
 } = require("./users.repository");
 const cloudinary = require("../../config/cloudinary");
 
@@ -112,10 +113,13 @@ const updateUser = async (token, userDetails) => {
       folder: "profile-pics",
     });
     userDetails.profilePic = result.secure_url;
+    delete userDetails.file; // Hapus properti file sebelum mengirim ke Prisma
   }
 
   return await updateUserDetails(userId, userDetails);
 };
+
+
 
 const deleteUser = async (id) => {
   await deleteUserById(id);
