@@ -21,6 +21,16 @@ export const get = async (endpoint) => {
   }
 };
 
+export const getById = async (endpoint,id)=>{
+  try {
+    const response = await api.get(endpoint,id)
+    return response.data
+  } catch (error) {
+    console.log("error get detail", error);
+    throw error
+  }
+}
+
 // Fungsi untuk melakukan POST request
 export const post = async (endpoint, data) => {
   try {

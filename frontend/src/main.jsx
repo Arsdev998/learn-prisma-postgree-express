@@ -10,6 +10,7 @@ import Register from "./pages/Register.jsx";
 import { Provider } from "react-redux";
 import store from "./store.js";
 import Destination from "./pages/Destination.jsx";
+import DestinationDetail from "./pages/DestinationDetail.jsx";
 
 const router = createBrowserRouter([
   {
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
         path: "/destinasi",
         element: <Destination />,
       },
+      {
+        path: '/destinasi/:id',
+        element:<DestinationDetail/>
+      }
     ],
   },
   {
