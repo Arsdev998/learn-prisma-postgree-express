@@ -26,9 +26,9 @@ const router = createBrowserRouter([
         element: <Destination />,
       },
       {
-        path: '/destinasi/:id',
-        element:<DestinationDetail/>
-      }
+        path: "/destinasi/:id",
+        element: <DestinationDetail />,
+      },
     ],
   },
   {
@@ -45,7 +45,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Provider store={store}>
       <ThemeProvider>
-        <RouterProvider router={router} />
+          <RouterProvider router={router} />
       </ThemeProvider>
     </Provider>
   </React.StrictMode>

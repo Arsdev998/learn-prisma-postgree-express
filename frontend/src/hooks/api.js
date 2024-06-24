@@ -21,15 +21,15 @@ export const get = async (endpoint) => {
   }
 };
 
-export const getById = async (endpoint,id)=>{
+export const getById = async (endpoint, id) => {
   try {
-    const response = await api.get(endpoint,id)
-    return response.data
+    const response = await api.get(endpoint, id);
+    return response.data;
   } catch (error) {
     console.log("error get detail", error);
-    throw error
+    throw error;
   }
-}
+};
 
 // Fungsi untuk melakukan POST request
 export const post = async (endpoint, data) => {
@@ -39,6 +39,16 @@ export const post = async (endpoint, data) => {
     return response.data;
   } catch (error) {
     console.error(`Failed to create at ${endpoint}:`, error);
+    throw error;
+  }
+};
+
+export const remove = async (endpoint, id) => {
+  try {
+    const response = await api.delete(endpoint, id);
+    return response.data;
+  } catch (error) {
+    console.log("gagal menghapus data", error);
     throw error;
   }
 };

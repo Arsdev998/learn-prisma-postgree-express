@@ -33,7 +33,7 @@ const ListDestinasi = () => {
           />
           <div className="flex flex-col gap-y-4 p-4">
             <h2 className="text-red-700 text-xl font-bold">{dest.name}</h2>
-            <p className="text-clip overflow-hidden">
+            <p className="text-clip overflow-hidden font-semibold">
               {truncatetext(dest.description, 255)}
             </p>
             <div className="flex gap-4">
