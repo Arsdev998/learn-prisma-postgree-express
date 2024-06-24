@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { post } from "../../hooks/api";
+import { get, post } from "../../hooks/api";
 
 const initialState = {
   token: localStorage.getItem("token") || null,
@@ -37,6 +37,16 @@ export const logout = createAsyncThunk("auth/logout", async () => {
   localStorage.removeItem("token");
 });
 
+export const getMe = createAsyncThunk("auth/me", async (thunkAPI) => {
+  try {
+    const response = await get("/auth/me");
+    return response;
+  } catch (error) {
+    const message = error.response?.data?.message || error.message;
+    return thunkAPI.rejectWithValue(message);
+  }
+});
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -49,7 +59,7 @@ const authSlice = createSlice({
     builder
       .addCase(login.fulfilled, (state, action) => {
         state.token = action.payload.token;
-        state.user = action.payload.data;
+        state.user = action.payload.user;
         state.isAuthenticated = true;
         state.status = "succeeded";
         state.error = null;
@@ -60,7 +70,7 @@ const authSlice = createSlice({
       })
       .addCase(register.fulfilled, (state, action) => {
         state.token = action.payload.token;
-        state.user = action.payload.data;
+        state.user = action.payload.user;
         state.isAuthenticated = true;
         state.status = "succeeded";
         state.error = null;
@@ -71,12 +81,22 @@ const authSlice = createSlice({
       })
       .addCase(googleLogin.fulfilled, (state, action) => {
         state.token = action.payload.token;
-        state.user = action.payload.data;
+        state.user = action.payload.user;
         state.isAuthenticated = true;
         state.status = "succeeded";
         state.error = null;
       })
       .addCase(googleLogin.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+      .addCase(getMe.fulfilled, (state, action) => {
+        state.user = action.payload;
+        state.isAuthenticated = true;
+        state.status = "succeeded";
+        state.error = null;
+      })
+      .addCase(getMe.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
       })

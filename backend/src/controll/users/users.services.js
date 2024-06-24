@@ -9,6 +9,7 @@ const {
   updateUserDetails,
 } = require("./users.repository");
 const cloudinary = require("../../config/cloudinary");
+const prisma = require("../../db");
 
 const generateToken = (user) => {
   const payload = {
@@ -119,6 +120,21 @@ const updateUser = async (token, userDetails) => {
   return await updateUserDetails(userId, userDetails);
 };
 
+const getUserById = async (id) => {
+  return await prisma.user.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      profilePic: true,
+      role: true,
+      createdAt: true,
+      updatedAt: true
+    }
+  });
+};
+
 
 
 const deleteUser = async (id) => {
@@ -132,4 +148,5 @@ module.exports = {
   uploadProfilePic,
   updateUser,
   deleteUser,
+  getUserById
 };

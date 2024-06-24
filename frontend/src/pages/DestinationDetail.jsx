@@ -1,15 +1,16 @@
 import Comment from "@/components/DestinasiDetail/comment/Comment";
+import FavButton from "@/components/DestinasiDetail/favorites/FavButton";
 import { Button } from "@/components/ui/button";
-import { ToastAction } from "@/components/ui/toast";
-import { getById, post } from "@/hooks/api";
+import { getById, post, remove } from "@/hooks/api";
 import React, { useEffect, useState } from "react";
+import { BsBookmarkPlusFill } from "react-icons/bs";
 import { FaMapMarkedAlt } from "react-icons/fa";
 import { Link, useParams } from "react-router-dom";
+import { toast } from "sonner";
 
 const DestinationDetail = () => {
   const { id } = useParams();
   const [data, setData] = useState([]);
-  const [comments, setComment] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -24,12 +25,12 @@ const DestinationDetail = () => {
     };
     fetchDestinasiDetail();
   }, [id]);
+
   console.log(data);
-  console.log(comments);
   return (
     <>
-      <div className="flex flex-col items-center lg:px-[200px]">
-        <div className="">
+      <div className="flex flex-col justify-center items-center min-h-screen">
+        <div className="container mx-auto">
           <h1 className="text-xl font-bold">{data.name}</h1>
           <div className="flex gap-2">
             <img
@@ -37,7 +38,6 @@ const DestinationDetail = () => {
               alt={data.name}
               className="w-[770px] h-[510px] object-cover"
             />
-
             {data.images && data.images.length > 0 ? (
               <div className="flex flex-col gap-y-2">
                 <img
@@ -81,8 +81,9 @@ const DestinationDetail = () => {
               to={data.maps}
               className="font-bold flex items-center gap-x-1"
             >
-              <FaMapMarkedAlt className="text-orange-500" />
+              <FaMapMarkedAlt className="text-orange-500 text-xl" />
             </Link>
+            <FavButton wisataId={id} />
           </div>
           <div className="w-[70%]">
             <h2 className="font-bold text-2xl ">Tentang Destinasi Wisata</h2>

@@ -7,12 +7,16 @@ const {
   uploadProfilePic,
   deleteUser,
   updateUser,
+  getUserById,
 } = require("./users.services");
 const multer = require("multer");
-const { adminValidation } = require("../middleware/accesValidation");
+const {
+  adminValidation,
+  accessValidation,
+} = require("../middleware/accesValidation");
 
 // Middleware untuk mengunggah file menggunakan multer
-const upload = multer({ dest: 'uploads/profile-pics/' });
+const upload = multer({ dest: "uploads/profile-pics/" });
 
 // Daftar pengguna baru
 router.post("/register", async (req, res) => {
@@ -63,18 +67,22 @@ router.post("/logout", async (req, res) => {
   }
 });
 
-router.post("/upload-profile-pic", upload.single('profilePic'), async (req, res) => {
-  try {
-    const { file } = req;
-    const token = req.cookies.token;
-    const user = await uploadProfilePic(token, file);
-    res.json(user);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+router.post(
+  "/upload-profile-pic",
+  upload.single("profilePic"),
+  async (req, res) => {
+    try {
+      const { file } = req;
+      const token = req.cookies.token;
+      const user = await uploadProfilePic(token, file);
+      res.json(user);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
   }
-});
+);
 
-router.put("/update", upload.single('profilePic'), async (req, res) => {
+router.put("/update", upload.single("profilePic"), async (req, res) => {
   try {
     const token = req.cookies.token;
     const userDetails = {
@@ -88,15 +96,23 @@ router.put("/update", upload.single('profilePic'), async (req, res) => {
   }
 });
 
-
 // Hapus pengguna
-router.delete("/delete/:id",adminValidation, async (req, res) => {
+router.delete("/delete/:id", adminValidation, async (req, res) => {
   try {
     const { id } = req.params;
     await deleteUser(parseInt(id));
     res.json({ message: `User ${id} deleted` });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+router.get("/me", accessValidation, async (req, res) => {
+  try {
+    const user = await getUserById(req.userData.id);
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 });
 

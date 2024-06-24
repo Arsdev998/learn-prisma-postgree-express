@@ -58,10 +58,16 @@ const Comment = ({ commentId }) => {
     }
   };
 
+  const sortedComments = comments.sort(
+    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+  );
+
   return (
     <div>
       <div className="mt-5">
-        <h2 className="font-bold text-2xl">Comment</h2>
+        <h2 className="font-bold text-2xl my-2">
+          Komentar orang tentang Destinasi ini
+        </h2>
         <form onSubmit={handleComment} className="flex items-center gap-x-2">
           <textarea
             name=""
@@ -75,12 +81,12 @@ const Comment = ({ commentId }) => {
         </form>
         {loading ? (
           <p>loading...</p>
-        ) : comments.length === 0 ? (
+        ) : sortedComments.length === 0 ? (
           <p>Belum ada komentar</p>
         ) : (
           <div className="flex flex-col gap-y-2 p-2">
-            {comments.map((cmn) => (
-              <div key={cmn.id} className="p-2 bg-slate-200 w-[50%]">
+            {sortedComments.map((cmn) => (
+              <div key={cmn.createdAt} className="p-2 bg-slate-200 w-[50%]">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-x-2">
                     <img
