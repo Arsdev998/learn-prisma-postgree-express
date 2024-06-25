@@ -1,5 +1,6 @@
 import Comment from "@/components/DestinasiDetail/comment/Comment";
 import FavButton from "@/components/DestinasiDetail/favorites/FavButton";
+import { BreadCrumbs } from "@/components/head/BreadCrums";
 import { Button } from "@/components/ui/button";
 import { getById, post, remove } from "@/hooks/api";
 import React, { useEffect, useState } from "react";
@@ -31,7 +32,11 @@ const DestinationDetail = () => {
     <>
       <div className="flex flex-col justify-center items-center min-h-screen">
         <div className="container mx-auto">
-          <h1 className="text-xl font-bold">{data.name}</h1>
+          <BreadCrumbs
+            prevlocation={"Destinasi"}
+            href={"/destinasi"}
+            currentLoc={data.name}
+          />
           <div className="flex gap-2">
             <img
               src={data.coverimg}
@@ -65,7 +70,8 @@ const DestinationDetail = () => {
               <p></p>
             )}
           </div>
-          <div className="flex gap-10 mt-4 items-center">
+          <h1 className="text-3xl font-bold my-2">{data.name}</h1>
+          <div className="flex gap-10 items-center">
             <p className="font-bold">
               Provinsi <span className="text-orange-500"> {data.provinsi}</span>
             </p>
@@ -86,8 +92,16 @@ const DestinationDetail = () => {
             <FavButton wisataId={id} />
           </div>
           <div className="w-[70%]">
+            <p className="font-semibold ">
+              <span className="text-orange-500">{data.favorites?.length}</span>{" "}
+              Orang menambahkan Destinasi ini ke Favorite Mereka
+            </p>
             <h2 className="font-bold text-2xl ">Tentang Destinasi Wisata</h2>
             <p className="font-semibold">{data.description}</p>
+            <p className="font-semibold">
+              {" "}
+              <span className="text-orange-500">{data.comments?.length} </span> Orang berkomentar
+            </p>
             <Comment commentId={id} />
           </div>
         </div>

@@ -1,4 +1,3 @@
-import useShowToast from "@/hooks/useShowToast";
 import React, { useEffect, useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
 import profile from "@/assets/img/profile.png";
@@ -11,10 +10,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
+import { useDispatch, useSelector } from "react-redux";
+import { getMe } from "@/features/auth/authSlice";
+import { Modal } from "@/components/modal/Modal";
 const Comment = ({ commentId }) => {
   const [comments, setComment] = useState([]);
   const [loading, setLoading] = useState(true);
   const [content, setContent] = useState("");
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
+
   useEffect(() => {
     const fetchCommentWisata = async () => {
       try {
@@ -29,8 +34,15 @@ const Comment = ({ commentId }) => {
     fetchCommentWisata();
   }, [commentId]);
 
+  useEffect(() => {
+    dispatch(getMe());
+  }, [dispatch]);
+
   const handleComment = async (e) => {
     e.preventDefault();
+    if (!user) {
+      return <Modal />;
+    }
     try {
       const newContent = { content };
       const sendComment = await post(
@@ -61,10 +73,9 @@ const Comment = ({ commentId }) => {
   const sortedComments = comments.sort(
     (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
   );
-
   return (
-    <div>
-      <div className="mt-5">
+    <>
+      <div className="">
         <h2 className="font-bold text-2xl my-2">
           Komentar orang tentang Destinasi ini
         </h2>
@@ -72,6 +83,7 @@ const Comment = ({ commentId }) => {
           <textarea
             name=""
             id=""
+            required
             placeholder="Tambahkan Komentar"
             value={content}
             onChange={(e) => setContent(e.target.value)}
@@ -102,10 +114,14 @@ const Comment = ({ commentId }) => {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
                       <div className="flex flex-col gap-y-2 bg-transparent">
-                        <Button onClick={() => handleDelete(cmn.id)}>
-                          Hapus
-                        </Button>
-                        <Button>Edit</Button>
+                        {user && user.id === cmn.userId && (
+                          <div className="flex flex-col gap-y-2">
+                            <Button onClick={() => handleDelete(cmn.id)}>
+                              Hapus
+                            </Button>
+                            <Button>Edit</Button>
+                          </div>
+                        )}
                         <Button className="bg-red-600">Laporkan</Button>
                       </div>
                     </DropdownMenuContent>
@@ -120,7 +136,7 @@ const Comment = ({ commentId }) => {
           </div>
         )}
       </div>
-    </div>
+    </>
   );
 };
 
