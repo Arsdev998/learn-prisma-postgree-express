@@ -100,7 +100,7 @@ const DestinationDetail = () => {
             <p className="font-semibold">{data.description}</p>
             <p className="font-semibold">
               {" "}
-              <span className="text-orange-500">{data.comments?.length} </span> Orang berkomentar
+              <span className="text-orange-500">{data.comments?.length} </span>komentar
             </p>
             <Comment commentId={id} />
           </div>

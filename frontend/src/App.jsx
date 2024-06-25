@@ -46,7 +46,7 @@ const App = () => {
     <>
       <Header />
       <Outlet />
-      <Toaster richColors/>
+      <Toaster position="top-center" richColors  />
     </>
   );
 };

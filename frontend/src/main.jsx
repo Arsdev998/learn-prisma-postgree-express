@@ -11,6 +11,9 @@ import { Provider } from "react-redux";
 import store from "./store.js";
 import Destination from "./pages/Destination.jsx";
 import DestinationDetail from "./pages/DestinationDetail.jsx";
+import AboutPage from "./pages/AboutPage.jsx";
+import ContactPage from "./pages/ContactPage.jsx";
+import ProfilePage from "./pages/ProfilePage.jsx";
 
 const router = createBrowserRouter([
   {
@@ -29,6 +32,18 @@ const router = createBrowserRouter([
         path: "/destinasi/:id",
         element: <DestinationDetail />,
       },
+      {
+        path: "/profile",
+        element: <ProfilePage />,
+      },
+      {
+        path: "/about",
+        element: <AboutPage />,
+      },
+      {
+        path: "/contact",
+        element: <ContactPage />,
+      },
     ],
   },
   {
@@ -45,7 +60,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Provider store={store}>
       <ThemeProvider>
-          <RouterProvider router={router} />
+        <RouterProvider router={router} />
       </ThemeProvider>
     </Provider>
   </React.StrictMode>

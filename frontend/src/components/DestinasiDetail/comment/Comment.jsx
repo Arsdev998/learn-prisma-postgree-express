@@ -41,7 +41,7 @@ const Comment = ({ commentId }) => {
   const handleComment = async (e) => {
     e.preventDefault();
     if (!user) {
-      return <Modal />;
+      return toast.warning("Kamu harus login terlebih dahulu")
     }
     try {
       const newContent = { content };
@@ -63,7 +63,7 @@ const Comment = ({ commentId }) => {
       setComment((prevComments) =>
         prevComments.filter((comment) => comment.id !== cmnId)
       );
-      toast.success("Komen Dihapus");
+      toast.success("Komentar Dihapus");
     } catch (error) {
       console.log(error);
       // showToast("Failed to delete comment", "error");

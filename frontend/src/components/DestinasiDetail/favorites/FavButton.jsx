@@ -7,6 +7,7 @@ import React, { useEffect } from "react";
 import { BsBookmarkCheckFill, BsBookmarkPlusFill } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
 import { getMe } from "@/features/auth/authSlice";
+import { toast } from "sonner";
 
 const FavButton = ({ wisataId }) => {
   const dispatch = useDispatch();
@@ -31,7 +32,7 @@ const FavButton = ({ wisataId }) => {
         dispatch(addFavorite({ userId: user.id, wisataId }));
       }
     } else {
-      console.log("User not logged in");
+      toast.warning("Kamu harus login Dahulu")
     }
   };
   console.log(isFavorite);
@@ -42,6 +43,7 @@ const FavButton = ({ wisataId }) => {
       ) : (
         <BsBookmarkPlusFill className="text-orange-500 text-xl" />
       )}
+      
     </div>
   );
 };
