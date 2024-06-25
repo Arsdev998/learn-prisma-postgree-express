@@ -43,6 +43,20 @@ export const post = async (endpoint, data) => {
   }
 };
 
+export const put = async (endpoint, data) => {
+  try {
+    const response = await api.put(endpoint, data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+
 export const remove = async (endpoint, id) => {
   try {
     const response = await api.delete(endpoint, id);

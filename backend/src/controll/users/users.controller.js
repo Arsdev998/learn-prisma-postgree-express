@@ -89,12 +89,14 @@ router.put("/update", upload.single("profilePic"), async (req, res) => {
       name: req.body.name,
       file: req.file,
     };
+    console.log("Received userDetails:", userDetails); // Logging untuk memastikan data diterima
     const user = await updateUser(token, userDetails);
     res.json(user);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
+
 
 // Hapus pengguna
 router.delete("/delete/:id", adminValidation, async (req, res) => {

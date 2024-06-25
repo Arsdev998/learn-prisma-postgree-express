@@ -27,7 +27,7 @@ const ProfilePage = () => {
             <p className="font-semibold ">{user?.name}</p>
             <p>{user?.email}</p>
           </div>
-         <ModalUpdateProfile email={user?.email}  img={user?.profilePic}/>
+         <ModalUpdateProfile nameUser={user?.name} img={user?.profilePic}/>
         </div>
       </div>
     </>

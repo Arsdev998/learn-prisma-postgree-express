@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { login } from "../features/auth/authSlice";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import googleIcon from '../assets/img/google.png'
+import googleIcon from "../assets/img/google.png";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -16,12 +16,6 @@ const Login = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate("/"); // Arahkan ke halaman home setelah login
-    }
-  }, [isAuthenticated, navigate]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -86,7 +80,9 @@ const Login = () => {
           Login with Google
           <img src={googleIcon} alt="" className="w-4 h-4" />
         </Button>
-        <Link to={'/register'} className="text-blue-700 font-medium">Belum memiliki akun?, Signup</Link>
+        <Link to={"/register"} className="text-blue-700 font-medium">
+          Belum memiliki akun?, Signup
+        </Link>
       </div>
     </div>
   );
