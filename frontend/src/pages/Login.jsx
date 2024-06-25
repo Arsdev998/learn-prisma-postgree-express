@@ -16,6 +16,9 @@ const Login = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  if(isAuthenticated){
+    navigate('/')
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -29,6 +32,8 @@ const Login = () => {
   const handleGoogleLogin = () => {
     window.location.href = `${import.meta.env.VITE_BACKEND_URL}/auth/google`;
   };
+
+  console.log("login ?",isAuthenticated);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">

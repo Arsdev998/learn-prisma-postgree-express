@@ -19,6 +19,7 @@ module.exports = {
     extend: {
       colors: {
         border: "hsl(var(--border))",
+        okegas:"#EB662B",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
@@ -72,6 +73,9 @@ module.exports = {
         "accordion-up": "accordion-up 0.2s ease-out",
       },
     },
+    backgroundImage:{
+      'coverProfile': "url('./src/assets/img/cover.png')"
+    }
   },
   plugins: [require("tailwindcss-animate")],
 }

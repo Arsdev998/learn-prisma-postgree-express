@@ -16,7 +16,7 @@ const HamburgerMenu = () => {
       </button>
       <div
         className={`absolute top-12 right-0 bg-white shadow-lg rounded-lg ${
-          isOpen ? "block" : "hidden"
+          isOpen ? "block z-[9999]" : "hidden"
         }`}
       >
         <Nav />

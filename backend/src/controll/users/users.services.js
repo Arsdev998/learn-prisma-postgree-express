@@ -130,7 +130,8 @@ const getUserById = async (id) => {
       profilePic: true,
       role: true,
       createdAt: true,
-      updatedAt: true
+      updatedAt: true,
+      comments:true,
     }
   });
 };

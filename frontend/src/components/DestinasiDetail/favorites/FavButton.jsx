@@ -38,12 +38,7 @@ const FavButton = ({ wisataId }) => {
   console.log(isFavorite);
   return (
     <div onClick={handleFav} className="cursor-pointer">
-      {isFavorite ? (
-        <BsBookmarkCheckFill className="text-orange-500 text-xl" />
-      ) : (
-        <BsBookmarkPlusFill className="text-orange-500 text-xl" />
-      )}
-      
+      {isFavorite ?  <BsBookmarkCheckFill className="text-okegas"/> : <BsBookmarkPlusFill className="text-okegas"/>}
     </div>
   );
 };
