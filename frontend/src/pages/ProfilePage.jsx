@@ -6,7 +6,6 @@ import ModalUpdateProfile from "@/components/profilepage/ModalUpdateProfile";
 import FavoriteUser from "@/components/profilepage/FavoriteUser";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TabsContent } from "@radix-ui/react-tabs";
-import cover from "../assets/img/cover.png";
 
 const ProfilePage = () => {
   const { user } = useSelector((state) => state.auth);
@@ -19,7 +18,7 @@ const ProfilePage = () => {
   return (
     <>
       <div className="flex flex-col items-center  w-full">
-        <div className="flex flex-col items-center w-[80%] h-[300px] bg-coverProfile">
+        <div className="flex flex-col items-center w-[80%] h-[300px] custom-gradient">
           <img
             src={user?.profilePic || profile}
             alt=""
@@ -33,7 +32,7 @@ const ProfilePage = () => {
           </div>
           <ModalUpdateProfile nameUser={user?.name} img={user?.profilePic} />
         </div>
-        <div className="mt-40 w-full flex justify-center">
+        <div className="mt-2 w-full flex justify-center">
           <Tabs defaultValue="comment" className="w-[700px]">
             <TabsList className="flex justify-around">
               <TabsTrigger value="comment">Komentar</TabsTrigger>

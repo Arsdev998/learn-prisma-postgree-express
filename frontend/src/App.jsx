@@ -4,7 +4,8 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { googleLogin, login } from "./features/auth/authSlice";
 import Header from "./components/head/Header";
-import { Toaster } from "@/components/ui/sonner"
+import { Toaster } from "@/components/ui/sonner";
+import ScrollToTop from "./hooks/ScrollToTop";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -42,11 +43,13 @@ const App = () => {
     }
   }, [dispatch, navigate, isAuthenticated]);
 
+  console.log(isAuthenticated);
   return (
     <>
+      <ScrollToTop />
       <Header />
       <Outlet />
-      <Toaster position="top-center" richColors  />
+      <Toaster position="top-center" richColors />
     </>
   );
 };

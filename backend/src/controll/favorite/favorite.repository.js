@@ -48,7 +48,8 @@ const getFavoritesByUserId = async (userId) => {
       userId: userIdInt,
     },
     include: {
-      wisata: true, // Sertakan data wisata dalam hasil
+      wisata: true, 
+       // Sertakan data wisata dalam hasil
     },
   });
 

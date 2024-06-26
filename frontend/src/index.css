@@ -73,4 +73,7 @@
     body {
       @apply bg-background text-foreground;
     }
+    .custom-gradient {
+      background: linear-gradient(45deg, #004d64 25%, #f97316 25%, #f97316 50%, #facc15 50%, #facc15 75%, #f59e0b 75%);
+  }
   }

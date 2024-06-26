@@ -21,10 +21,10 @@ export const addFavorite = createAsyncThunk(
   async ({ userId, wisataId }) => {
     try {
       const response = await post("/wisata/favorites", { userId, wisataId });
-      toast.success("succes");
+      toast.success("Berhasil Menambahkan ke Favorite");
       return response.data;
     } catch (error) {
-      toast.error("GAGALLLLLLLLL", error);
+      toast.error("Gagal Menambahkan ke Favorite", error);
     }
   }
 );
@@ -37,7 +37,7 @@ export const deleteFavorite = createAsyncThunk(
       toast.success("Dihapus dari Favorite");
       return { wisataId };
     } catch (error) {
-      toast.error("GAGAAALLLLLLLLLL", error);
+      toast.error("Gagal menghapus", error);
       console.log(error);
     }
   }

@@ -4,12 +4,12 @@ import {
   fetchFavorites,
 } from "@/features/auth/favoritesSlice";
 import React, { useEffect } from "react";
-import { BsBookmarkCheckFill, BsBookmarkPlusFill } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
 import { getMe } from "@/features/auth/authSlice";
+import { MdOutlineFavorite, MdOutlineFavoriteBorder } from "react-icons/md";
 import { toast } from "sonner";
 
-const FavButton = ({ wisataId }) => {
+const FavButton = ({ className, wisataId }) => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const { items: favorites } = useSelector((state) => state.favorites);
@@ -32,13 +32,17 @@ const FavButton = ({ wisataId }) => {
         dispatch(addFavorite({ userId: user.id, wisataId }));
       }
     } else {
-      toast.warning("Kamu harus login Dahulu")
+      toast.warning("Kamu harus login Dahulu");
     }
   };
   console.log(isFavorite);
   return (
-    <div onClick={handleFav} className="cursor-pointer">
-      {isFavorite ?  <BsBookmarkCheckFill className="text-okegas"/> : <BsBookmarkPlusFill className="text-okegas"/>}
+    <div onClick={handleFav} className={`cursor-pointer ${className}`}>
+      {isFavorite ? (
+        <MdOutlineFavorite className="text-okegas" />
+      ) : (
+        <MdOutlineFavoriteBorder className="text-okegas" />
+      )}
     </div>
   );
 };

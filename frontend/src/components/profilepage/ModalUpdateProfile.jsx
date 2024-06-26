@@ -15,15 +15,18 @@ import usePreviewImage from "@/hooks/usePreviewImage";
 import { Avatar, AvatarImage } from "../ui/avatar";
 import { put } from "@/hooks/api";
 import { toast } from "sonner";
+import { IoReload } from "react-icons/io5";
 
 const ModalUpdateProfile = ({ img, nameUser }) => {
-  const { handleImageChange, imgUrl, setImgUrl } = usePreviewImage();
+  const { handleImageChange, imgUrl } = usePreviewImage();
   const [name, setName] = useState(nameUser);
+  const [loading, setLoading] = useState(false);
   const fileRef = useRef(null);
 
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
+      setLoading(true)
       const formData = new FormData();
       formData.append("name", name);
       if (fileRef.current && fileRef.current.files[0]) {
@@ -37,6 +40,7 @@ const ModalUpdateProfile = ({ img, nameUser }) => {
 
       const update = await put("/auth/update", formData);
       toast.success("Profile updated successfully");
+      setLoading(false);
     } catch (error) {
       toast.error("Failed to update profile");
       console.log(error);
@@ -74,7 +78,13 @@ const ModalUpdateProfile = ({ img, nameUser }) => {
             />
           </div>
           <DialogFooter>
-            <Button type="submit">Save changes</Button>
+            {loading ? (
+              <Button disabled>
+                Please Wait <IoReload className="mr-2 h-4 w-4 animate-spin" />
+              </Button>
+            ) : (
+              <Button type="submit">Save changes</Button>
+            )}
           </DialogFooter>
         </form>
       </DialogContent>
