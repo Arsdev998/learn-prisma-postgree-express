@@ -6,10 +6,20 @@ import { IoIosStar } from "react-icons/io";
 import { SiGooglemaps } from "react-icons/si";
 import { IoStar } from "react-icons/io5";
 import FavButton from "../DestinasiDetail/favorites/FavButton";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "../ui/pagination";
 
 const ListDestinasi = () => {
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
 
   useEffect(() => {
     const fetchDestinasi = async () => {
@@ -31,9 +41,15 @@ const ListDestinasi = () => {
     return 0;
   };
 
+  const indexOflastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOflastItem - itemsPerPage;
+  const currentItems = data.slice(indexOfFirstItem, indexOflastItem);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
   return (
     <div className="flex flex-col gap-4 p-6">
-      {data.map((dest) => {
+      {currentItems.map((dest) => {
         const averageRating = calculateAverageRating(dest.ratings);
         return (
           <div
@@ -83,6 +99,37 @@ const ListDestinasi = () => {
         );
       })}
       {error && <p className="text-red-500">{error}</p>}
+      <Pagination>
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious
+              href="#"
+              onClick={() => paginate(currentPage - 1)}
+              disabled={currentPage === 1}
+            />
+          </PaginationItem>
+          {[...Array(Math.ceil(data.length / itemsPerPage)).keys()].map(
+            (number) => (
+              <PaginationItem key={number}>
+                <PaginationLink
+                  href="#"
+                  isActive={number + 1 === currentPage}
+                  onClick={() => paginate(number + 1)}
+                >
+                  {number + 1}
+                </PaginationLink>
+              </PaginationItem>
+            )
+          )}
+          <PaginationItem>
+            <PaginationNext
+              href="#"
+              onClick={() => paginate(currentPage + 1)}
+              disabled={currentPage === Math.ceil(data.length / itemsPerPage)}
+            />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
     </div>
   );
 };

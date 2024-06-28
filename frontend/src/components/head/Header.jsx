@@ -10,7 +10,7 @@ import { FaSearchLocation } from "react-icons/fa";
 
 const Header = () => {
   return (
-    <header className=" w-full lg:w-[1300px] md:mx-auto  md:py-4">
+    <header className=" w-full lg:w-[1300px] md:mx-auto  md:py-4 sticky  top-0 bg-white bg-opacity-75">
       <div className="flex justify-around md:justify-between  items-center">
         <div className="flex gap-10 items-center">
           <Link to={"/"}>
