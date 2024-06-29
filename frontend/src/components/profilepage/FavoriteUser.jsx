@@ -10,14 +10,23 @@ import {
 } from "../ui/dropdown-menu";
 import { useDispatch } from "react-redux";
 import { deleteFavorite } from "@/features/auth/favoritesSlice";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { SiGooglemaps } from "react-icons/si";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "../ui/pagination";
 
 const FavoriteUser = ({ userId }) => {
   const [favData, setFavData] = useState([]);
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerpage = 6;
 
   useEffect(() => {
     const fetchfavUser = async () => {
@@ -42,6 +51,12 @@ const FavoriteUser = ({ userId }) => {
     }
   };
 
+  const indexOfLastItems = currentPage * itemsPerpage;
+  const indexOfFirstItems = indexOfLastItems - itemsPerpage;
+  const currentItems = favData.slice(indexOfFirstItems, indexOfLastItems);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
   return (
     <div>
       {loading ? (
@@ -50,7 +65,7 @@ const FavoriteUser = ({ userId }) => {
         <p>Kamu belum menambahkan ke favorite</p>
       ) : (
         <div className="flex flex-col gap-y-2">
-          {favData.map((fav) => (
+          {currentItems.map((fav) => (
             <div
               key={fav.id}
               className="flex flex-col md:flex-row bg-white shadow-md rounded-lg overflow-hidden"
@@ -92,6 +107,39 @@ const FavoriteUser = ({ userId }) => {
           ))}
         </div>
       )}
+      <Pagination>
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious
+              href="#"
+              onClick={() => paginate(currentPage - 1)}
+              disabled={currentPage === 1}
+            />
+          </PaginationItem>
+          {[...Array(Math.ceil(favData.length / itemsPerpage)).keys()].map(
+            (number) => (
+              <PaginationItem key={number}>
+                <PaginationLink
+                  href="#"
+                  isActive={currentPage + 1 === currentPage}
+                  onClick={() => paginate(number + 1)}
+                >
+                  {number + 1}
+                </PaginationLink>
+              </PaginationItem>
+            )
+          )}
+          <PaginationItem>
+            <PaginationNext
+              href="#"
+              onClick={() => paginate(currentPage + 1)}
+              disabled={
+                currentPage === Math.ceil(favData.length / itemsPerpage)
+              }
+            />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
     </div>
   );
 };
