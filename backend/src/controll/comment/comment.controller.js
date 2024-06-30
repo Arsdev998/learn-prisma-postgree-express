@@ -53,8 +53,8 @@ router.put('/:id', accessValidation, async (req, res) => {
     const commentData = req.body;
     const userId = req.userData.id;
     const userRole = req.userData.role;
-    const comment = await editComment(parseInt(commentId), commentData, userId, userRole);
-    res.send({ comment, message: 'Comment updated successfully' });
+    const updatedComment = await editComment(parseInt(commentId), commentData, userId, userRole);
+    res.send({ comment: updatedComment, message: 'Comment updated successfully' });
   } catch (error) {
     res.status(400).send({ error: `Failed: ${error.message}` });
   }
